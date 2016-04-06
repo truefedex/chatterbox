@@ -14,8 +14,8 @@ impl WavChatterboxOutput {
 			channels: 1,
 			sample_rate: 44100,
 			bits_per_sample: 16
-		};
-		let writer : WavWriter<std::io::BufWriter<std::fs::File>> = WavWriter::create(file_name, spec).unwrap();
+        };
+        let writer : WavWriter<std::io::BufWriter<std::fs::File>> = WavWriter::create(file_name, spec).unwrap();
         WavChatterboxOutput { writer: writer, }
     }
 }
