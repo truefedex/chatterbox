@@ -1,0 +1,7 @@
+[package]
+name = "chatterbox"
+version = "0.1.0"
+authors = ["Maric"]
+
+[dependencies]
+hound = "1.1.0"
