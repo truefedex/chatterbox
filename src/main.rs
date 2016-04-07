@@ -29,12 +29,14 @@ impl chatterbox::Output for WavChatterboxOutput {
 fn main() { 
     let args: Vec<_> = env::args().collect();
     if args.len() <= 1 {
-        println!("Chatterbox v 0.1.0\nИспользование:\n  chatterbox <текст>");
+        println!("Chatterbox v0.1.0\nИспользование:\n  chatterbox <текст>\nP.S.: понимает только кириллицу");
         return;
-    } else {
-        println!("The first argument is {}", args[1]);
     }
     
-    let backend : &mut chatterbox::Backend = &mut chatterbox::backends::Synthetic as &mut chatterbox::Backend;
-    backend.synth(&args[1], &mut WavChatterboxOutput::new("output.wav") as &mut chatterbox::Output);
+    let input_text = &args[1];
+    const OUT_FILENAME :  &'static str = "output.wav";
+    println!("Рендерю: \"{}\" в {}...", input_text, OUT_FILENAME);
+    
+    let backend = &mut chatterbox::backends::Synthetic as &mut chatterbox::Backend;
+    backend.synth(&input_text, &mut WavChatterboxOutput::new(OUT_FILENAME) as &mut chatterbox::Output);
 }
