@@ -35,6 +35,6 @@ fn main() {
         println!("The first argument is {}", args[1]);
     }
     
-    let backend : &mut chatterbox::Backend = &mut chatterbox::backends::Synthetic{ x: 0.0 } as &mut chatterbox::Backend;
-    backend.synth("test", &mut WavChatterboxOutput::new("output.wav") as &mut chatterbox::Output);
+    let backend : &mut chatterbox::Backend = &mut chatterbox::backends::Synthetic as &mut chatterbox::Backend;
+    backend.synth(&args[1], &mut WavChatterboxOutput::new("output.wav") as &mut chatterbox::Output);
 }
