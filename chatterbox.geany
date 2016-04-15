@@ -29,7 +29,7 @@ long_line_column=72
 
 [files]
 current_page=1
-FILE_NAME_0=99;None;0;EUTF-8;1;1;0;F%3A%5Cchatterbox%5CCargo.toml;0;4
-FILE_NAME_1=366;Rust;0;EUTF-8;1;1;0;F%3A%5Cchatterbox%5Csrc%5Cmain.rs;0;4
+FILE_NAME_0=0;None;0;EUTF-8;1;1;0;D%3A%5CProjects%5CRust%5Cchatterbox%5CCargo.toml;0;4
+FILE_NAME_1=98;Rust;0;EUTF-8;1;1;0;D%3A%5CProjects%5CRust%5Cchatterbox%5Csrc%5Cmain.rs;0;4
 
 [build-menu]
