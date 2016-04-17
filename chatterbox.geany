@@ -19,17 +19,30 @@ indent_mode=2
 
 [project]
 name=chatterbox
-base_path=F:\\chatterbox\\
+base_path=/Users/fedex/projects/tests/rust_learning/chatterbox
 description=
-file_patterns=
+file_patterns=*.rs;*.toml;
 
 [long line marker]
 long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=1
-FILE_NAME_0=0;None;0;EUTF-8;1;1;0;D%3A%5CProjects%5CRust%5Cchatterbox%5CCargo.toml;0;4
-FILE_NAME_1=98;Rust;0;EUTF-8;1;1;0;D%3A%5CProjects%5CRust%5Cchatterbox%5Csrc%5Cmain.rs;0;4
+current_page=0
+FILE_NAME_0=1;JSON;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fpatterns%2Fru.json;0;4
+FILE_NAME_1=0;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fbackends%2Fpatternbased.rs;0;4
+FILE_NAME_2=0;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fbackends%2Fmod.rs;0;4
+FILE_NAME_3=727;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fmain.rs;0;4
 
 [build-menu]
+
+[VTE]
+last_dir=/Users/fedex
+
+[prjorg]
+source_patterns=*.c;*.C;*.cpp;*.cxx;*.c++;*.cc;*.m;
+header_patterns=*.h;*.H;*.hpp;*.hxx;*.h++;*.hh;
+ignored_dirs_patterns=.*;CVS;
+ignored_file_patterns=*.o;*.obj;*.a;*.lib;*.so;*.dll;*.lo;*.la;*.class;*.jar;*.pyc;*.mo;*.gmo;
+generate_tag_prefs=0
+external_dirs=

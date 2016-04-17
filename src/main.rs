@@ -34,9 +34,12 @@ fn main() {
     }
     
     let input_text = &args[1];
-    const OUT_FILENAME :  &'static str = "output.wav";
-    println!("Рендерю: \"{}\" в {}...", input_text, OUT_FILENAME);
+    const DEFAULT_OUT_FILENAME :  &'static str = "output.wav";
+    const DEFAULT_PATTERNS_PATH :  &'static str = "patterns/";
     
-    let backend = &mut chatterbox::backends::Synthetic as &mut chatterbox::Backend;
-    backend.synth(&input_text, &mut WavChatterboxOutput::new(OUT_FILENAME) as &mut chatterbox::Output);
+    //let backend = &mut chatterbox::backends::Synthetic as &mut chatterbox::Backend;
+    let backend = &mut chatterbox::backends::PatternBased::from_patterns_path(DEFAULT_PATTERNS_PATH) as &mut chatterbox::Backend;
+    
+    println!("Рендерю: \"{}\" в {}...", input_text, DEFAULT_OUT_FILENAME);
+    backend.synth(&input_text, &mut WavChatterboxOutput::new(DEFAULT_OUT_FILENAME) as &mut chatterbox::Output);
 }
