@@ -29,7 +29,8 @@ impl chatterbox::Output for WavChatterboxOutput {
 fn main() { 
     let args: Vec<_> = env::args().collect();
     if args.len() <= 1 {
-        println!("Chatterbox v0.1.0\nИспользование:\n  chatterbox <текст>\nP.S.: понимает только кириллицу");
+		const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+        println!("Chatterbox v{}\nUsage:\n  chatterbox <текст>\nP.S.: currently understand only cyrillic", VERSION);
         return;
     }
     

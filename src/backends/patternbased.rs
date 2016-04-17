@@ -1,18 +1,32 @@
+extern crate rustc_serialize;
+
 use Backend;
 use Output;
 use std::fs;
 use std::io;
 use std::path::Path;
+use std::fs::File;
+use std::io::Read;
+use rustc_serialize::json;
+use std::collections::BTreeMap;
 
 pub struct PatternBased {
 	patterns: Vec<PatternCollection>,
 }
 
 #[derive(RustcDecodable)]
-pub struct PatternCollection;
+pub struct PatternCollection {
+	path: String,
+	sounds: BTreeMap<String, String>,
+}
 
 impl PatternBased {
 	fn read_pattern_collection(path: &str) -> Result<PatternCollection, io::Error> {
+		let mut file = File::open(path).unwrap();
+		let mut data = String::new();
+		file.read_to_string(&mut data).unwrap();
+
+		let json = Json::from_str(&data).unwrap();
 		println!("We here: {}", path);
 		Ok(PatternCollection)
 	}
