@@ -1,8 +1,12 @@
 extern crate hound;
 extern crate chatterbox;
+#[macro_use] extern crate log;
+extern crate simplelog;
 
 use std::env;
+use chatterbox::backends;
 use hound::{ WavWriter, WavSpec };
+use simplelog::{TermLogger, LogLevelFilter};
 
 struct WavChatterboxOutput {
     writer: WavWriter<std::io::BufWriter<std::fs::File>>,
@@ -26,7 +30,10 @@ impl chatterbox::Output for WavChatterboxOutput {
     }       
 }
 
-fn main() { 
+fn main() {
+	TermLogger::init(LogLevelFilter::Info).unwrap();
+	info!("starting up");
+	
     let args: Vec<_> = env::args().collect();
     if args.len() <= 1 {
 		const VERSION: &'static str = env!("CARGO_PKG_VERSION");
@@ -39,7 +46,7 @@ fn main() {
     const DEFAULT_PATTERNS_PATH :  &'static str = "patterns/";
     
     //let backend = &mut chatterbox::backends::Synthetic as &mut chatterbox::Backend;
-    let backend = &mut chatterbox::backends::PatternBased::from_patterns_path(DEFAULT_PATTERNS_PATH) as &mut chatterbox::Backend;
+    let backend = &mut backends::PatternBased::from_patterns_path(DEFAULT_PATTERNS_PATH) as &mut chatterbox::Backend;
     
     println!("Рендерю: \"{}\" в {}...", input_text, DEFAULT_OUT_FILENAME);
     backend.synth(&input_text, &mut WavChatterboxOutput::new(DEFAULT_OUT_FILENAME) as &mut chatterbox::Output);

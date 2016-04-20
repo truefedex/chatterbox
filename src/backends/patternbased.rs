@@ -1,5 +1,4 @@
-use Backend;
-use Output;
+use super::super::*;
 use std::fs;
 use std::io;
 use std::ffi::OsStr;
@@ -20,14 +19,13 @@ pub struct PatternCollection {
 }
 
 impl PatternBased {
-	fn read_pattern_collection(path: &str) -> Result<PatternCollection, io::Error> {
-		/*let mut file = File::open(path).unwrap();
+	fn read_pattern_collection(path: &str) -> Result<PatternCollection, SynthError> {
+		let mut file = try!(File::open(path).map_err(SynthError::Io));
 		let mut data = String::new();
-		file.read_to_string(&mut data).unwrap();
-
-		let json = Json::from_str(&data).unwrap();
-		println!("We here: {}", path);*/
-		Ok(PatternCollection{path: "".to_string(), sounds: BTreeMap::new()})
+		try!(file.read_to_string(&mut data).map_err(SynthError::Io));
+		let collection: PatternCollection = try!(json::decode(&data).map_err(SynthError::PatternCollectionDecode));		
+		info!("Decoded path of collection: {}, patterns count: {}", collection.path, collection.sounds.len());
+		Ok(collection)
 	}
 	
 	pub fn from_patterns_path(patterns_path: &str) -> PatternBased {
@@ -39,12 +37,13 @@ impl PatternBased {
 				if let Ok(entry) = entry_result {
 					if let Ok(file_type) = entry.file_type() {
 						if file_type.is_file() {							
-							if let Some(ext) = entry.path().as_path().extension() {
+							if let Some(ext) = entry.path().as_path().extension() {								
 								if let Some(ext_str) = ext.to_str() {
 									if ext_str.to_string().to_lowercase() == PATTERN_COLLECTION_CONFIG_EXT {
 										if let Some(path_str) = entry.path().as_path().to_str() {
-											if let Ok(collection) = PatternBased::read_pattern_collection(path_str) {
-												collections.push(collection);
+											match PatternBased::read_pattern_collection(path_str) {
+												Ok(collection) => collections.push(collection),
+												Err(err) => warn!("Unable to read pattern collection {}", err),
 											}
 										}
 									}

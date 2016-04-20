@@ -19,7 +19,7 @@ indent_mode=2
 
 [project]
 name=chatterbox
-base_path=/Users/fedex/projects/tests/rust_learning/chatterbox
+base_path=./
 description=
 file_patterns=*.rs;*.toml;
 
@@ -29,10 +29,13 @@ long_line_column=72
 
 [files]
 current_page=0
-FILE_NAME_0=1;JSON;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fpatterns%2Fru.json;0;4
-FILE_NAME_1=0;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fbackends%2Fpatternbased.rs;0;4
-FILE_NAME_2=0;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fbackends%2Fmod.rs;0;4
-FILE_NAME_3=727;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fmain.rs;0;4
+FILE_NAME_0=841;Rust;0;EUTF-8;1;1;0;D%3A%5CProjects%5CRust%5Cchatterbox%5Csrc%5Cmain.rs;0;4
+FILE_NAME_1=1653;Rust;0;EUTF-8;1;1;0;D%3A%5CProjects%5CRust%5Cchatterbox%5Csrc%5Clib.rs;0;4
+FILE_NAME_2=0;Rust;0;EUTF-8;1;1;0;D%3A%5CProjects%5CRust%5Cchatterbox%5Csrc%5Cbackends%5Cmod.rs;0;4
+FILE_NAME_3=0;Rust;0;EUTF-8;1;1;0;D%3A%5CProjects%5CRust%5Cchatterbox%5Csrc%5Cbackends%5Csynthetic.rs;0;4
+FILE_NAME_4=1733;Rust;0;EUTF-8;1;1;0;D%3A%5CProjects%5CRust%5Cchatterbox%5Csrc%5Cbackends%5Cpatternbased.rs;0;4
+FILE_NAME_5=39;JSON;0;EUTF-8;1;1;0;D%3A%5CProjects%5CRust%5Cchatterbox%5Cpatterns%5Cru.json;0;4
+FILE_NAME_6=189;None;0;EUTF-8;1;1;0;D%3A%5CProjects%5CRust%5Cchatterbox%5CCargo.toml;0;4
 
 [build-menu]
 

@@ -1,11 +1,11 @@
 {
-    "path" : "ru"
+    "path" : "ru",
     "sounds" : {
         "а" : "a.wav",
         "б" : "b.wav",
         "в" : "v.wav",
         "г" : "g.wav",
         "д" : "d.wav",
-        "е" : "e.wav",
+        "е" : "e.wav"
     }
 }
