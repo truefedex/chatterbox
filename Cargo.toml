@@ -6,3 +6,5 @@ authors = ["truefedex"]
 [dependencies]
 hound = "1.1.0"
 rand = "0.3.0"
+rustc-serialize = "0.3.19"
+log = "0.3.6"

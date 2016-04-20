@@ -1,3 +1,7 @@
+#[macro_use]
+extern crate log;
+extern crate rustc_serialize;
+
 pub trait Output {
     fn write_sample(&mut self, sample: i16);
 }
