@@ -12,8 +12,12 @@ pub struct PatternBased {
 	patterns: Vec<PatternCollection>,
 }
 
-#[derive(RustcDecodable)]
 pub struct PatternCollection {
+	sounds: BTreeMap<String, String>,
+}
+
+#[derive(RustcDecodable)]
+pub struct PatternCollectionDescription {
 	path: String,
 	sounds: BTreeMap<String, String>,
 }
@@ -23,9 +27,20 @@ impl PatternBased {
 		let mut file = try!(File::open(path).map_err(SynthError::Io));
 		let mut data = String::new();
 		try!(file.read_to_string(&mut data).map_err(SynthError::Io));
-		let collection: PatternCollection = try!(json::decode(&data).map_err(SynthError::PatternCollectionDecode));		
-		info!("Decoded path of collection: {}, patterns count: {}", collection.path, collection.sounds.len());
-		Ok(collection)
+		let collection_desc: PatternCollectionDescription = try!(json::decode(&data).map_err(SynthError::PatternCollectionDecode));		
+		info!("Decoded path of collection: {}, patterns count: {}", collection_desc.path, collection_desc.sounds.len());
+		
+		let mut sounds = BTreeMap::new();
+		for (ref letter, ref file_name) in collection_desc.sounds.iter() {
+			let collection_path = Path::new(path).parent();
+			if collection_path.is_none() {
+				continue;
+			}
+			let pattern_path = collection_path.unwrap().join(collection_desc.path).join(file_name);
+			info!("Pattern path: {}", pattern_path.to_str().unwrap());
+			//let mut reader = hound::WavReader::open("testsamples/pop.wav").unwrap();
+		}
+		Ok(PatternCollection{sounds: sounds})
 	}
 	
 	pub fn from_patterns_path(patterns_path: &str) -> PatternBased {
