@@ -31,7 +31,7 @@ impl chatterbox::Output for WavChatterboxOutput {
 }
 
 fn main() {
-	TermLogger::init(LogLevelFilter::Info).unwrap();
+	TermLogger::init(LogLevelFilter::Debug).unwrap();
 	info!("starting up");
 	
     let args: Vec<_> = env::args().collect();

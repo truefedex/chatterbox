@@ -28,16 +28,17 @@ impl PatternBased {
 		let mut data = String::new();
 		try!(file.read_to_string(&mut data).map_err(SynthError::Io));
 		let collection_desc: PatternCollectionDescription = try!(json::decode(&data).map_err(SynthError::PatternCollectionDecode));		
-		info!("Decoded path of collection: {}, patterns count: {}", collection_desc.path, collection_desc.sounds.len());
+		debug!("Decoded path of collection: {}, patterns count: {}", collection_desc.path, collection_desc.sounds.len());
 		
 		let mut sounds = BTreeMap::new();
-		for (ref letter, ref file_name) in collection_desc.sounds.iter() {
+		let relative_patterns_path = &collection_desc.path;
+		for (letter, file_name) in collection_desc.sounds.iter() {
 			let collection_path = Path::new(path).parent();
 			if collection_path.is_none() {
 				continue;
 			}
-			let pattern_path = collection_path.unwrap().join(collection_desc.path).join(file_name);
-			info!("Pattern path: {}", pattern_path.to_str().unwrap());
+			let pattern_path = collection_path.unwrap().join(relative_patterns_path).join(file_name);
+			debug!("Pattern path: {}", pattern_path.to_str().unwrap());
 			//let mut reader = hound::WavReader::open("testsamples/pop.wav").unwrap();
 		}
 		Ok(PatternCollection{sounds: sounds})
