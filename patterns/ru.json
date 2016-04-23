@@ -1,5 +1,6 @@
 {
     "path" : "ru",
+    "max_chars" : 2,
     "sounds" : {
         "а" : "a.wav",
         "б" : "b.wav",

@@ -1,24 +1,26 @@
 use super::super::*;
 use std::fs;
 use std::io;
-use std::ffi::OsStr;
 use std::path::Path;
 use std::fs::File;
 use std::io::Read;
 use rustc_serialize::*;
 use std::collections::BTreeMap;
+use hound::WavReader;
 
 pub struct PatternBased {
 	patterns: Vec<PatternCollection>,
 }
 
 pub struct PatternCollection {
-	sounds: BTreeMap<String, String>,
+	sounds: BTreeMap<String, Vec<i16>>,
+	max_chars: i16,
 }
 
 #[derive(RustcDecodable)]
 pub struct PatternCollectionDescription {
 	path: String,
+	max_chars: i16,
 	sounds: BTreeMap<String, String>,
 }
 
@@ -30,18 +32,34 @@ impl PatternBased {
 		let collection_desc: PatternCollectionDescription = try!(json::decode(&data).map_err(SynthError::PatternCollectionDecode));		
 		debug!("Decoded path of collection: {}, patterns count: {}", collection_desc.path, collection_desc.sounds.len());
 		
-		let mut sounds = BTreeMap::new();
+		let mut sounds: BTreeMap<String, Vec<i16>> = BTreeMap::new();
 		let relative_patterns_path = &collection_desc.path;
-		for (letter, file_name) in collection_desc.sounds.iter() {
+		for (chars, file_name) in collection_desc.sounds.iter() {
 			let collection_path = Path::new(path).parent();
 			if collection_path.is_none() {
 				continue;
 			}
 			let pattern_path = collection_path.unwrap().join(relative_patterns_path).join(file_name);
 			debug!("Pattern path: {}", pattern_path.to_str().unwrap());
-			//let mut reader = hound::WavReader::open("testsamples/pop.wav").unwrap();
+			if let Ok(reader) = WavReader::open(&pattern_path) {
+				let spec = reader.spec();
+				if spec.channels != 1 {
+					warn!("Unsupported pattern format - only mono sources supported: {}", pattern_path.to_str().unwrap());
+					continue;
+				}
+				if spec.sample_rate != 44100 {
+					warn!("Unsupported pattern format - supported samplerate is 44100 : {}", pattern_path.to_str().unwrap());
+					continue;
+				}
+				if spec.bits_per_sample != 16 {
+					warn!("Unsupported pattern format - only 16 bit audio data supported : {}", pattern_path.to_str().unwrap());
+					continue;
+				}
+				let samples: Vec<i16> = reader.into_samples().filter_map(|sample|{ sample.ok() }).collect();
+				sounds.insert(chars.clone(), samples);
+			}
 		}
-		Ok(PatternCollection{sounds: sounds})
+		Ok(PatternCollection{sounds: sounds, max_chars: collection_desc.max_chars})
 	}
 	
 	pub fn from_patterns_path(patterns_path: &str) -> PatternBased {
@@ -66,12 +84,12 @@ impl PatternBased {
 								}
 							}
 						}
-					}					
+					}
 				}
 			}
 		}
 		
-		PatternBased{patterns: collections}
+		PatternBased::new(collections)
 	}
 	
 	pub fn new(patterns: Vec<PatternCollection>) -> PatternBased {
@@ -79,10 +97,19 @@ impl PatternBased {
 	}
 }
 
-impl Backend for PatternBased {
+impl Backend for PatternBased {	
     fn synth(&self, input : &str, out: &mut Output) {
-        for chr in input.chars() {
-            //self.synth_char(chr, out)
+		let mut max_chars: i16 = 1;
+		for collection in &self.patterns {
+			if max_chars < collection.max_chars {
+				max_chars = collection.max_chars;
+			}
+		}
+	
+        for (i, chr) in input.chars().enumerate() {
+            for collection in &self.patterns {
+				
+			}
         }
     }       
 }

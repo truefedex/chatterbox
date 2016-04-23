@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate log;
 extern crate rustc_serialize;
+extern crate hound;
 
 use std::io;
 use rustc_serialize::json;
