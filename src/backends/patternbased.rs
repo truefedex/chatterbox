@@ -1,6 +1,5 @@
 use super::super::*;
 use std::fs;
-use std::io;
 use std::cmp;
 use std::path::Path;
 use std::fs::File;
@@ -96,6 +95,26 @@ impl PatternBased {
 	pub fn new(patterns: Vec<PatternCollection>) -> PatternBased {
 		PatternBased{patterns: patterns}
 	}
+	
+	fn write_pattern(&self, pattern: &Vec<i16>, out: &mut Output) {
+		for sample in pattern {
+			out.write_sample(*sample);
+		}
+	}
+	
+	fn write_default_pattern(&self, for_char: char, out: &mut Output) {
+		match for_char {
+            ',' => for _ in 0 .. 22050 {//0.5 sec of silence
+                    out.write_sample(0);
+                },
+            '.' => for _ in 0 .. 32000 {//~0.75 sec of silence
+                    out.write_sample(0);
+                },
+            _ => for _ in 0 .. 5000 {//~0.2 sec of silence
+                    out.write_sample(0);
+                },
+		}
+	}
 }
 
 impl Backend for PatternBased {
@@ -107,17 +126,33 @@ impl Backend for PatternBased {
 			}
 		}
 	
-        for (i, _) in input.chars().enumerate() {
-			let mut max_scan_chars_count = cmp::min(max_chars, (input.len() - i) as i16);
+		let mut i: usize = 0;
+		while i < input.len() {
+			let max_scan_chars_count = cmp::min(max_chars, (input.len() - i) as i16);
+			let mut found = false;
 			debug!("i {} max_scan_chars_count {}", i, max_scan_chars_count);
-			for scan_chars_count in (1..max_scan_chars_count).rev() {
+			for scan_chars_count in (1..max_scan_chars_count + 1).rev() {
 				debug!("scan_chars_count {}", scan_chars_count);
-				let str_to_search = &input[i..i + scan_chars_count as usize];
+				let str_to_search: &str = &input.chars().skip(i).take(scan_chars_count as usize).collect::<String>();
 				debug!("Str i: {} str_to_search: {}", i, str_to_search);
 				for collection in &self.patterns {
-					
+					if let Some(sound) = collection.sounds.get(str_to_search) {
+						self.write_pattern(sound, out);
+						found = true;
+						break;
+					}
+				}
+				if found {
+					i += scan_chars_count as usize;
+					break;
 				}
 			}
+			if !found {
+				if let Some(char) = input.chars().nth(i) {
+					self.write_default_pattern(char, out);				
+				}
+				i += 1;
+			}			
         }
     }       
 }
