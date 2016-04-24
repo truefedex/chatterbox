@@ -1,6 +1,7 @@
 use super::super::*;
 use std::fs;
 use std::io;
+use std::cmp;
 use std::path::Path;
 use std::fs::File;
 use std::io::Read;
@@ -97,18 +98,25 @@ impl PatternBased {
 	}
 }
 
-impl Backend for PatternBased {	
+impl Backend for PatternBased {
     fn synth(&self, input : &str, out: &mut Output) {
-		let mut max_chars: i16 = 1;
+		let mut max_chars = 1;
 		for collection in &self.patterns {
 			if max_chars < collection.max_chars {
 				max_chars = collection.max_chars;
 			}
 		}
 	
-        for (i, chr) in input.chars().enumerate() {
-            for collection in &self.patterns {
-				
+        for (i, _) in input.chars().enumerate() {
+			let mut max_scan_chars_count = cmp::min(max_chars, (input.len() - i) as i16);
+			debug!("i {} max_scan_chars_count {}", i, max_scan_chars_count);
+			for scan_chars_count in (1..max_scan_chars_count).rev() {
+				debug!("scan_chars_count {}", scan_chars_count);
+				let str_to_search = &input[i..i + scan_chars_count as usize];
+				debug!("Str i: {} str_to_search: {}", i, str_to_search);
+				for collection in &self.patterns {
+					
+				}
 			}
         }
     }       
