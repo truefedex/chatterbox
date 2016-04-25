@@ -119,6 +119,7 @@ impl PatternBased {
 
 impl Backend for PatternBased {
     fn synth(&self, input : &str, out: &mut Output) {
+		let lowercased_input = &input.to_string().to_lowercase();
 		let mut max_chars = 1;
 		for collection in &self.patterns {
 			if max_chars < collection.max_chars {
@@ -127,14 +128,11 @@ impl Backend for PatternBased {
 		}
 	
 		let mut i: usize = 0;
-		while i < input.len() {
-			let max_scan_chars_count = cmp::min(max_chars, (input.len() - i) as i16);
+		while i < lowercased_input.len() {
+			let max_scan_chars_count = cmp::min(max_chars, (lowercased_input.len() - i) as i16);
 			let mut found = false;
-			debug!("i {} max_scan_chars_count {}", i, max_scan_chars_count);
 			for scan_chars_count in (1..max_scan_chars_count + 1).rev() {
-				debug!("scan_chars_count {}", scan_chars_count);
-				let str_to_search: &str = &input.chars().skip(i).take(scan_chars_count as usize).collect::<String>();
-				debug!("Str i: {} str_to_search: {}", i, str_to_search);
+				let str_to_search: &str = &lowercased_input.chars().skip(i).take(scan_chars_count as usize).collect::<String>();
 				for collection in &self.patterns {
 					if let Some(sound) = collection.sounds.get(str_to_search) {
 						debug!("Found: {}", str_to_search);
@@ -149,7 +147,7 @@ impl Backend for PatternBased {
 				}
 			}
 			if !found {
-				if let Some(char) = input.chars().nth(i) {
+				if let Some(char) = lowercased_input.chars().nth(i) {
 					self.write_default_pattern(char, out);				
 				}
 				i += 1;
