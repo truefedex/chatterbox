@@ -137,6 +137,7 @@ impl Backend for PatternBased {
 				debug!("Str i: {} str_to_search: {}", i, str_to_search);
 				for collection in &self.patterns {
 					if let Some(sound) = collection.sounds.get(str_to_search) {
+						debug!("Found: {}", str_to_search);
 						self.write_pattern(sound, out);
 						found = true;
 						break;
