@@ -24,6 +24,20 @@ pub struct PatternCollectionDescription {
 	sounds: BTreeMap<String, String>,
 }
 
+macro_rules! try_or_continue {
+    ($e:expr) => (match $e {
+        Ok(val) => val,
+        Err(_) => continue,
+    });
+}
+
+macro_rules! something_or_continue {
+    ($e:expr) => (match $e {
+        Some(val) => val,
+        None => continue,
+    });
+}
+
 impl PatternBased {
 	fn read_pattern_collection(path: &str) -> Result<PatternCollection, SynthError> {
 		let mut file = try!(File::open(path).map_err(SynthError::Io));
@@ -41,22 +55,25 @@ impl PatternBased {
 			}
 			let pattern_path = collection_path.unwrap().join(relative_patterns_path).join(file_name);
 			debug!("Pattern path: {}", pattern_path.to_str().unwrap());
-			if let Ok(reader) = WavReader::open(&pattern_path) {
-				let spec = reader.spec();
-				if spec.channels != 1 {
-					warn!("Unsupported pattern format - only mono sources supported: {}", pattern_path.to_str().unwrap());
-					continue;
-				}
-				if spec.sample_rate != 44100 {
-					warn!("Unsupported pattern format - supported samplerate is 44100 : {}", pattern_path.to_str().unwrap());
-					continue;
-				}
-				if spec.bits_per_sample != 16 {
-					warn!("Unsupported pattern format - only 16 bit audio data supported : {}", pattern_path.to_str().unwrap());
-					continue;
-				}
-				let samples: Vec<i16> = reader.into_samples().filter_map(|sample|{ sample.ok() }).collect();
-				sounds.insert(chars.clone(), samples);
+			match WavReader::open(&pattern_path) {
+				Ok(reader) => {
+					let spec = reader.spec();
+					if spec.channels != 1 {
+						warn!("Unsupported pattern format - only mono sources supported: {}", pattern_path.to_str().unwrap());
+						continue;
+					}
+					if spec.sample_rate != 44100 {
+						warn!("Unsupported pattern format - supported samplerate is 44100 : {}", pattern_path.to_str().unwrap());
+						continue;
+					}
+					if spec.bits_per_sample != 16 {
+						warn!("Unsupported pattern format - only 16 bit audio data supported : {}", pattern_path.to_str().unwrap());
+						continue;
+					}
+					let samples: Vec<i16> = reader.into_samples().filter_map(|sample|{ sample.ok() }).collect();
+					sounds.insert(chars.clone(), samples);
+				},
+				Err(err) => warn!("Can't read pattern at path ({}): {}", pattern_path.to_str().unwrap(), err)
 			}
 		}
 		Ok(PatternCollection{sounds: sounds, max_chars: collection_desc.max_chars})
@@ -68,21 +85,18 @@ impl PatternBased {
 		const PATTERN_COLLECTION_CONFIG_EXT :  &'static str = "json";
 		if let Ok(entrys) = fs::read_dir(patterns_path) {			
 			for entry_result in entrys {
-				if let Ok(entry) = entry_result {
-					if let Ok(file_type) = entry.file_type() {
-						if file_type.is_file() {							
-							if let Some(ext) = entry.path().as_path().extension() {								
-								if let Some(ext_str) = ext.to_str() {
-									if ext_str.to_string().to_lowercase() == PATTERN_COLLECTION_CONFIG_EXT {
-										if let Some(path_str) = entry.path().as_path().to_str() {
-											match PatternBased::read_pattern_collection(path_str) {
-												Ok(collection) => collections.push(collection),
-												Err(err) => warn!("Unable to read pattern collection {}", err),
-											}
-										}
-									}
-								}
-							}
+				let entry = try_or_continue!(entry_result);
+				let file_type = try_or_continue!(entry.file_type());
+				if file_type.is_file() {
+					let entry_path_buf = entry.path();
+					let path_as_path = entry_path_buf.as_path();
+					let ext = &something_or_continue!(path_as_path.extension());
+					let ext_str = something_or_continue!(ext.to_str());	
+					if ext_str.to_string().to_lowercase() == PATTERN_COLLECTION_CONFIG_EXT {
+						let path_str = something_or_continue!(path_as_path.to_str());
+						match PatternBased::read_pattern_collection(path_str) {
+							Ok(collection) => collections.push(collection),
+							Err(err) => warn!("Unable to read pattern collection {}", err),
 						}
 					}
 				}

@@ -33,6 +33,18 @@
         "э" : "ee.wav",
         "ю" : "yu.wav",
         "я" : "ya.wav",
+        
+        "ба" : "b/ba.wav",
+        "бе" : "b/be.wav",
+        "бё" : "b/byo.wav",
+        "би" : "b/bi.wav",
+        "бо" : "b/bo.wav",
+        "бу" : "b/bu.wav",
+        "бы" : "b/bii.wav",
+        "бэ" : "b/bee.wav",
+        "бю" : "b/byu.wav",
+        "бя" : "b/bya.wav",
+        
         "та" : "t/ta.wav",
         "те" : "t/te.wav",
         "тё" : "t/tyo.wav",
