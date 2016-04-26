@@ -2,11 +2,13 @@ extern crate hound;
 extern crate chatterbox;
 #[macro_use] extern crate log;
 extern crate simplelog;
+extern crate getopts;
 
 use std::env;
-use chatterbox::backends;
+use chatterbox::*;
 use hound::{ WavWriter, WavSpec };
 use simplelog::{TermLogger, LogLevelFilter};
+use getopts::Options;
 
 struct WavChatterboxOutput {
     writer: WavWriter<std::io::BufWriter<std::fs::File>>,
@@ -30,24 +32,55 @@ impl chatterbox::Output for WavChatterboxOutput {
     }       
 }
 
+fn print_usage(program: &str, opts: Options) {
+	const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+    let brief = format!("Chatterbox v{}\nUsage: {} TEXT [options]", VERSION, program);
+    print!("{}", opts.usage(&brief));
+}
+
 fn main() {
-	TermLogger::init(LogLevelFilter::Debug).unwrap();
-	info!("starting up");
+	const DEFAULT_OUT_FILENAME :  &'static str = "output.wav";
+    const DEFAULT_PATTERNS_PATH :  &'static str = "patterns/";
+    const DEFAULT_MODE :  &'static str = "p";
 	
-    let args: Vec<_> = env::args().collect();
-    if args.len() <= 1 {
-		const VERSION: &'static str = env!("CARGO_PKG_VERSION");
-        println!("Chatterbox v{}\nUsage:\n  chatterbox <текст>\nP.S.: currently understand only cyrillic", VERSION);
+	TermLogger::init(LogLevelFilter::Debug).unwrap();
+	info!("Starting up...");
+	
+	let args: Vec<String> = env::args().collect();
+    let program = args[0].clone();
+
+    let mut opts = Options::new();
+    opts.optopt("o", "out", "set output file name (default is output.wav)", "NAME");
+    opts.optopt("m", "mode", "set synth mode - (s)ynthetic or (p)atternbased (default is patternbased)", "MODE");
+    opts.optflag("h", "help", "print this help menu");
+    
+    let matches = match opts.parse(&args[1..]) {
+        Ok(m) => { m }
+        Err(f) => { panic!(f.to_string()) }
+    };
+    
+    if matches.opt_present("h") {
+        print_usage(&program, opts);
         return;
     }
     
-    let input_text = &args[1];
-    const DEFAULT_OUT_FILENAME :  &'static str = "output.wav";
-    const DEFAULT_PATTERNS_PATH :  &'static str = "patterns/";
+    let output = matches.opt_str("o").unwrap_or(DEFAULT_OUT_FILENAME.to_string());
+	
+	let input_text = if !matches.free.is_empty() {
+        matches.free[0].clone()
+    } else {
+        print_usage(&program, opts);
+        return;
+    };
     
-    //let backend = &mut chatterbox::backends::Synthetic as &mut chatterbox::Backend;
-    let backend = &mut backends::PatternBased::from_patterns_path(DEFAULT_PATTERNS_PATH) as &mut chatterbox::Backend;
+    let mode = matches.opt_str("m").unwrap_or(DEFAULT_MODE.to_string());
     
-    println!("Рендерю: \"{}\" в {}...", input_text, DEFAULT_OUT_FILENAME);
-    backend.synth(&input_text, &mut WavChatterboxOutput::new(DEFAULT_OUT_FILENAME) as &mut chatterbox::Output);
+    let backend: Box<Backend> = 
+    if mode == "s" {
+		Box::new(backends::Synthetic)
+	} else {
+		Box::new(backends::PatternBased::from_patterns_path(DEFAULT_PATTERNS_PATH))
+	};
+    
+    backend.synth(&input_text, &mut WavChatterboxOutput::new(&output) as &mut Output);
 }
