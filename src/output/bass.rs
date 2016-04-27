@@ -13,6 +13,7 @@ impl BassChatterboxOutput {
         let stream = unsafe { BASS_StreamCreate(44100, 1, 0, STREAMPROC_PUSH, 0) };
         debug!("Bass stream created - {}", stream);
         res = unsafe { BASS_ChannelPlay(stream, 0) };
+        debug!("Bass stream play - {}", res);
         BassChatterboxOutput { stream: stream, buffer: Vec::new()}
     }
     

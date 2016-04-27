@@ -80,11 +80,7 @@ fn main() {
 	let input_text = if !matches.free.is_empty() {
         matches.free[0].clone()
     } else {
-        if cfg!(target_os = "windows") {
-            run_interactive(&backend);
-        } else {
-            print_usage(&program, opts);
-        }
+        run_interactive(&backend);
         return;
     };
     
