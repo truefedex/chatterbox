@@ -3,34 +3,16 @@ extern crate chatterbox;
 #[macro_use] extern crate log;
 extern crate simplelog;
 extern crate getopts;
+extern crate libc;
+
+mod output;
 
 use std::env;
+use std::io;
 use chatterbox::*;
-use hound::{ WavWriter, WavSpec };
 use simplelog::{TermLogger, LogLevelFilter};
 use getopts::Options;
-
-struct WavChatterboxOutput {
-    writer: WavWriter<std::io::BufWriter<std::fs::File>>,
-}
-
-impl WavChatterboxOutput {
-    fn new(file_name : &str) -> WavChatterboxOutput {
-        let spec = WavSpec {
-            channels: 1,
-            sample_rate: 44100,
-            bits_per_sample: 16
-        };
-        let writer : WavWriter<std::io::BufWriter<std::fs::File>> = WavWriter::create(file_name, spec).unwrap();
-        WavChatterboxOutput { writer: writer, }
-    }
-}
-
-impl chatterbox::Output for WavChatterboxOutput {
-    fn write_sample(&mut self, sample: i16) {
-        self.writer.write_sample(sample).unwrap();
-    }       
-}
+use output::*;
 
 fn print_usage(program: &str, opts: Options) {
 	const VERSION: &'static str = env!("CARGO_PKG_VERSION");
@@ -38,12 +20,33 @@ fn print_usage(program: &str, opts: Options) {
     print!("{}", opts.usage(&brief));
 }
 
+fn interactive_loop(backend: &Box<Backend>) -> io::Result<()> {
+    let output = &mut BassChatterboxOutput::new();
+    loop {
+        print!(">");
+        let mut input = String::new();
+        try!(io::stdin().read_line(&mut input));
+        if input.trim().is_empty() {
+            break;
+        }
+        backend.synth(&input, output);
+        output.flush();
+    }
+    Ok(())
+}
+
+fn run_interactive(backend: &Box<Backend>) {    
+    if let Some(err) = interactive_loop(backend).err() {
+        println!("Oops! Error: {}", err);
+    }    
+}
+
 fn main() {
 	const DEFAULT_OUT_FILENAME :  &'static str = "output.wav";
     const DEFAULT_PATTERNS_PATH :  &'static str = "patterns/";
     const DEFAULT_MODE :  &'static str = "p";
 	
-	TermLogger::init(LogLevelFilter::Debug).unwrap();
+	TermLogger::init(LogLevelFilter::Info/*Debug*/).unwrap();
 	info!("Starting up...");
 	
 	let args: Vec<String> = env::args().collect();
@@ -66,21 +69,24 @@ fn main() {
     
     let output = matches.opt_str("o").unwrap_or(DEFAULT_OUT_FILENAME.to_string());
 	
+    let mode = matches.opt_str("m").unwrap_or(DEFAULT_MODE.to_string());    
+    let backend: Box<Backend> = 
+        if mode == "s" {
+            Box::new(backends::Synthetic)
+        } else {
+            Box::new(backends::PatternBased::from_patterns_path(DEFAULT_PATTERNS_PATH))
+        };
+    
 	let input_text = if !matches.free.is_empty() {
         matches.free[0].clone()
     } else {
-        print_usage(&program, opts);
+        if cfg!(target_os = "windows") {
+            run_interactive(&backend);
+        } else {
+            print_usage(&program, opts);
+        }
         return;
     };
-    
-    let mode = matches.opt_str("m").unwrap_or(DEFAULT_MODE.to_string());
-    
-    let backend: Box<Backend> = 
-    if mode == "s" {
-		Box::new(backends::Synthetic)
-	} else {
-		Box::new(backends::PatternBased::from_patterns_path(DEFAULT_PATTERNS_PATH))
-	};
     
     backend.synth(&input_text, &mut WavChatterboxOutput::new(&output) as &mut Output);
 }
