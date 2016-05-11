@@ -4,6 +4,7 @@ extern crate chatterbox;
 extern crate simplelog;
 extern crate getopts;
 extern crate libc;
+extern crate hyper;
 
 mod output;
 
@@ -13,6 +14,9 @@ use chatterbox::*;
 use simplelog::{TermLogger, LogLevelFilter};
 use getopts::Options;
 use output::*;
+use hyper::Server;
+use hyper::server::Request;
+use hyper::server::Response;
 
 fn print_usage(program: &str, opts: Options) {
 	const VERSION: &'static str = env!("CARGO_PKG_VERSION");
@@ -41,6 +45,15 @@ fn run_interactive(backend: &Box<Backend>) {
     }    
 }
 
+fn hello(_: Request, res: Response) {
+    res.send(b"Hello World!").unwrap();
+}
+
+fn run_http_server(backend: &Box<Backend>) {
+	Server::http("127.0.0.1:3000").unwrap()
+        .handle(hello).unwrap();
+}
+
 fn main() {
 	const DEFAULT_OUT_FILENAME :  &'static str = "output.wav";
     const DEFAULT_PATTERNS_PATH :  &'static str = "patterns/";
@@ -55,6 +68,7 @@ fn main() {
     let mut opts = Options::new();
     opts.optopt("o", "out", "set output file name (default is output.wav)", "NAME");
     opts.optopt("m", "mode", "set synth mode - (s)ynthetic or (p)atternbased (default is patternbased)", "MODE");
+    opts.optflag("s", "server", "run in http server mode");
     opts.optflag("h", "help", "print this help menu");
     
     let matches = match opts.parse(&args[1..]) {
@@ -65,9 +79,7 @@ fn main() {
     if matches.opt_present("h") {
         print_usage(&program, opts);
         return;
-    }
-    
-    let output = matches.opt_str("o").unwrap_or(DEFAULT_OUT_FILENAME.to_string());
+    }    
 	
     let mode = matches.opt_str("m").unwrap_or(DEFAULT_MODE.to_string());    
     let backend: Box<Backend> = 
@@ -76,6 +88,11 @@ fn main() {
         } else {
             Box::new(backends::PatternBased::from_patterns_path(DEFAULT_PATTERNS_PATH))
         };
+        
+    if matches.opt_present("s") {
+		run_http_server(&backend);
+		return;
+	}
     
 	let input_text = if !matches.free.is_empty() {
         matches.free[0].clone()
@@ -83,6 +100,8 @@ fn main() {
         run_interactive(&backend);
         return;
     };
+    
+    let output = matches.opt_str("o").unwrap_or(DEFAULT_OUT_FILENAME.to_string());
     
     backend.synth(&input_text, &mut WavChatterboxOutput::new(&output) as &mut Output);
 }
