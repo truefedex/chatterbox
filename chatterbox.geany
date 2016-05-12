@@ -21,17 +21,17 @@ indent_mode=2
 name=chatterbox
 base_path=./
 description=
-file_patterns=*.rs;*.toml;*json;
+file_patterns=*.rs;*.toml;*.json;*.html;*.css;
 
 [long line marker]
 long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=1
+current_page=2
 FILE_NAME_0=877;JSON;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fpatterns%2Fru.json;0;4
-FILE_NAME_1=230;None;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2FCargo.toml;0;4
-FILE_NAME_2=0;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fmain.rs;0;4
+FILE_NAME_1=214;None;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2FCargo.toml;0;4
+FILE_NAME_2=341;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fmain.rs;0;4
 FILE_NAME_3=80;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Flib.rs;0;4
 FILE_NAME_4=0;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fbackends%2Fmod.rs;0;4
 FILE_NAME_5=10686;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fbackends%2Fsynthetic.rs;0;4

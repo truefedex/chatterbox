@@ -4,7 +4,9 @@ extern crate chatterbox;
 extern crate simplelog;
 extern crate getopts;
 extern crate libc;
-extern crate hyper;
+extern crate iron;
+extern crate staticfile;
+extern crate mount;
 
 mod output;
 
@@ -14,9 +16,11 @@ use chatterbox::*;
 use simplelog::{TermLogger, LogLevelFilter};
 use getopts::Options;
 use output::*;
-use hyper::Server;
-use hyper::server::Request;
-use hyper::server::Response;
+use std::path::Path;
+use iron::prelude::*;
+use staticfile::Static;
+use mount::Mount;
+
 
 fn print_usage(program: &str, opts: Options) {
 	const VERSION: &'static str = env!("CARGO_PKG_VERSION");
@@ -45,13 +49,15 @@ fn run_interactive(backend: &Box<Backend>) {
     }    
 }
 
-fn hello(_: Request, res: Response) {
-    res.send(b"Hello World!").unwrap();
-}
-
 fn run_http_server(backend: &Box<Backend>) {
-	Server::http("127.0.0.1:3000").unwrap()
-        .handle(hello).unwrap();
+	let mut mount = Mount::new();
+
+    // Serve the shared JS/CSS at /
+    mount.mount("/", Static::new(Path::new("www/")));
+
+    println!("Server running on http://localhost:3000/");
+
+    Iron::new(mount).http("127.0.0.1:3000").unwrap();
 }
 
 fn main() {
