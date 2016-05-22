@@ -12,6 +12,7 @@ use iron::modifiers::Header;
 use std::path::Path;
 use std::io::Cursor;
 use std::sync::Arc;
+use std::net::*;
 
 
 fn synth(req: &mut Request, backend: Arc<Box<Backend + Send + Sync>>) -> IronResult<Response> {	
@@ -42,7 +43,8 @@ pub fn run(backend: Arc<Box<Backend + Send + Sync>>) {
         .mount("/api/", router)
         .mount("/", Static::new(Path::new("www")));
 
-    println!("Server running on http://localhost:3000/");
-
-    Iron::new(mount).http("127.0.0.1:3000").unwrap();
+    println!("Server running on http://localhost:80/");
+	let host = SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), 80);
+    println!("listening on http://{}", host);
+    Iron::new(mount).http(host).unwrap();
 }
