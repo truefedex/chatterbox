@@ -2,12 +2,72 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
 <title>untitled</title>
 <meta name="generator" content="Geany 1.26" />
 </head>
+<style>
+html, body {
+	background: #FDFDD6;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+h2 {
+	margin: 0;
+    padding: 15px;
+    color: brown;
+    font-family: monospace;
+    font-size: 4em;
+}
+.content {
+	display: flex;
+}
+.left-panel {
 
+}
+.working-area {
+	width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 40px;
+}
+.topbar {
+	background: #FDD791;
+}
+#phrase_input {
+	display: block;
+    width: 80%;
+    height: 150px;
+    margin: 5px 0 10px;
+    font-size: 1.2em;
+}
+#submit_button {
+	width: 100px;
+    height: 40px;
+}
+
+</style>
+<script>
+function say() {
+	var query = document.getElementById('phrase_input').value;
+	var audio = new Audio('/api/synth/' + query);
+	audio.play();
+}
+</script>
 <body>
-Hello!!!
+	<div class="topbar"><h2>Говорилко!</h2></div>
+	<div class="content">
+		<div class="left-panel">		
+			<img src="crab.png" />
+		</div>
+		<div class="working-area">
+			<span style="color:red;">Понимает только кириллицу. На данный момент поддерживается только браузер Chrome.</span>
+			<textarea id="phrase_input">Прювет, аноним!</textarea>
+			<button id="submit_button" onclick="say()">Say</button>
+		</div>
+	</div>
 </body>
 
 </html>

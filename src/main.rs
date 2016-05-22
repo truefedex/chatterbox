@@ -7,20 +7,20 @@ extern crate libc;
 extern crate iron;
 extern crate staticfile;
 extern crate mount;
+extern crate router;
+extern crate url;
 
 mod output;
+mod server;
 
 use std::env;
 use std::io;
+use std::io::*;
+use std::sync::Arc;
 use chatterbox::*;
 use simplelog::{TermLogger, LogLevelFilter};
 use getopts::Options;
 use output::*;
-use std::path::Path;
-use iron::prelude::*;
-use staticfile::Static;
-use mount::Mount;
-
 
 fn print_usage(program: &str, opts: Options) {
 	const VERSION: &'static str = env!("CARGO_PKG_VERSION");
@@ -28,7 +28,7 @@ fn print_usage(program: &str, opts: Options) {
     print!("{}", opts.usage(&brief));
 }
 
-fn interactive_loop(backend: &Box<Backend>) -> io::Result<()> {
+fn interactive_loop(backend: Box<Backend>) -> io::Result<()> {
     let output = &mut BassChatterboxOutput::new();
     loop {
         print!(">");
@@ -43,21 +43,10 @@ fn interactive_loop(backend: &Box<Backend>) -> io::Result<()> {
     Ok(())
 }
 
-fn run_interactive(backend: &Box<Backend>) {    
+fn run_interactive(backend: Box<Backend>) {    
     if let Some(err) = interactive_loop(backend).err() {
         println!("Oops! Error: {}", err);
     }    
-}
-
-fn run_http_server(backend: &Box<Backend>) {
-	let mut mount = Mount::new();
-
-    // Serve the shared JS/CSS at /
-    mount.mount("/", Static::new(Path::new("www/")));
-
-    println!("Server running on http://localhost:3000/");
-
-    Iron::new(mount).http("127.0.0.1:3000").unwrap();
 }
 
 fn main() {
@@ -88,7 +77,7 @@ fn main() {
     }    
 	
     let mode = matches.opt_str("m").unwrap_or(DEFAULT_MODE.to_string());    
-    let backend: Box<Backend> = 
+    let backend: Box<Backend + Send + Sync> = 
         if mode == "s" {
             Box::new(backends::Synthetic)
         } else {
@@ -96,18 +85,18 @@ fn main() {
         };
         
     if matches.opt_present("s") {
-		run_http_server(&backend);
+		server::run(Arc::new(backend));
 		return;
 	}
     
 	let input_text = if !matches.free.is_empty() {
         matches.free[0].clone()
     } else {
-        run_interactive(&backend);
+        run_interactive(backend);
         return;
     };
     
-    let output = matches.opt_str("o").unwrap_or(DEFAULT_OUT_FILENAME.to_string());
-    
-    backend.synth(&input_text, &mut WavChatterboxOutput::new(&output) as &mut Output);
+    let output_filename = matches.opt_str("o").unwrap_or(DEFAULT_OUT_FILENAME.to_string());
+    let mut output = WavChatterboxOutput::new_for_file(&output_filename);
+    backend.synth(&input_text, &mut output);
 }

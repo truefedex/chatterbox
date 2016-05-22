@@ -28,15 +28,18 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=2
+current_page=7
 FILE_NAME_0=877;JSON;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fpatterns%2Fru.json;0;4
-FILE_NAME_1=214;None;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2FCargo.toml;0;4
-FILE_NAME_2=341;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fmain.rs;0;4
-FILE_NAME_3=80;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Flib.rs;0;4
+FILE_NAME_1=297;None;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2FCargo.toml;0;4
+FILE_NAME_2=2793;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fmain.rs;0;4
+FILE_NAME_3=231;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Flib.rs;0;4
 FILE_NAME_4=0;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fbackends%2Fmod.rs;0;4
 FILE_NAME_5=10686;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fbackends%2Fsynthetic.rs;0;4
 FILE_NAME_6=5202;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fbackends%2Fpatternbased.rs;0;4
 FILE_NAME_7=921;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Foutput%2Fbass.rs;0;4
+FILE_NAME_8=160;HTML;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fwww%2Findex.html;0;4
+FILE_NAME_9=302;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Foutput%2Fwav.rs;0;4
+FILE_NAME_10=903;Rust;0;EUTF-8;1;1;0;%2FUsers%2Ffedex%2Fprojects%2Ftests%2Frust_learning%2Fchatterbox%2Fsrc%2Fserver.rs;0;4
 
 [build-menu]
 
